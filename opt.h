@@ -29,6 +29,7 @@ struct options {
 	unsigned int batch_size;
 	bool fdupes_mode : 1;
 	uint64_t min_filesize;
+	bool hdd_mode : 1;
 	char *hashfile;
 };
 

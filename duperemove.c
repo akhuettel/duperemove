@@ -205,6 +205,7 @@ enum {
 	EXCLUDE_OPTION,
 	BATCH_SIZE_OPTION,
 	MIN_FILESIZE_OPTION,
+	HDD_OPTION,
 };
 
 static int process_fdupes(void)
@@ -318,6 +319,7 @@ static int parse_options(int argc, char **argv, int *filelist_idx)
 		{ "exclude", 1, NULL, EXCLUDE_OPTION },
 		{ "batchsize", 1, NULL, BATCH_SIZE_OPTION },
 		{ "min-filesize", 1, NULL, MIN_FILESIZE_OPTION },
+		{ "hdd-mode", 0, NULL, HDD_OPTION },
 		{ NULL, 0, NULL, 0}
 	};
 
@@ -421,6 +423,10 @@ static int parse_options(int argc, char **argv, int *filelist_idx)
 					"larger zero\n");
 				return EINVAL;
 			}
+			break;
+		case HDD_OPTION:
+			options.hdd_mode = true;
+			options.io_threads = 1;
 			break;
 		case HELP_OPTION:
 			help();

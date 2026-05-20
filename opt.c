@@ -25,4 +25,5 @@ struct options options = {
 	.batch_size = 1024,
 	.fdupes_mode = false,
 	.min_filesize = 1,
+	.hdd_mode = false,
 };

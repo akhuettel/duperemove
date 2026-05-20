@@ -1239,12 +1239,28 @@ int add_exclude_pattern(const char *pattern)
 void filescan_init(void)
 {
 	abort_on(scan_pool.pool);
-	setup_pool(&scan_pool, csum_whole_file, NULL, options.io_threads);
+	if (options.hdd_mode) {
+		// set the pool up, but freeze all work on it for now
+		setup_pool(&scan_pool, csum_whole_file, NULL, 0);
+	} else {
+		setup_pool(&scan_pool, csum_whole_file, NULL, options.io_threads);
+	}
 	abort_on(!scan_pool.pool);
 }
 
 void filescan_free(void)
 {
+	if (options.hdd_mode) {
+		// now that the filescan is done, we can allow the checksumming to proceed
+		GError *err = NULL;
+		if (!g_thread_pool_set_max_threads(scan_pool.pool, options.io_threads, &err )) {
+			eprintf("g_thread_pool_set_max_threads: %s\n", err->message);
+			g_error_free(err);
+			err = NULL;
+		}
+	}
+	// the pool is freed with immediate=FALSE and wait=TRUE, meaning all pending jobs
+	// still run and the function returns once they are done
 	free_pool(&scan_pool);
 }
 
